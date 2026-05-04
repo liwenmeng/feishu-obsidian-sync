@@ -1,4 +1,10 @@
 tokens.json
+sync_record.json
+sync.log
 __pycache__/
 *.pyc
 .env
+venv/
+*.egg-info/
+dist/
+build/
