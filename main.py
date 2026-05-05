@@ -1,11 +1,13 @@
+import time
+import requests
 from auth import get_valid_token
 from drive import traverse_tree
 from fetcher import get_docx_blocks, get_doc_raw_content, export_old_doc
 from converter import blocks_to_markdown, docx_bytes_to_markdown
 from writer import write_document, process_images, save_embedded_images, resolve_doc_links
 from sync_record import load, save, needs_sync, register_all, mark_synced
-from config import ROOT_FOLDER_TOKEN
-import requests
+from config import ROOT_FOLDER_TOKEN, FEISHU_WEBHOOK_URL
+from notify import send_sync_result
 
 
 def sync_one(doc: dict, user_token: str, record: dict) -> bool:
@@ -33,6 +35,7 @@ def sync_one(doc: dict, user_token: str, record: dict) -> bool:
 
 
 if __name__ == "__main__":
+    _start = time.time()
     token = get_valid_token()
     record = load()
 
@@ -60,5 +63,9 @@ if __name__ == "__main__":
         resolve_doc_links(record)
     save(record)
 
+    elapsed = time.time() - _start
     print(f"\n{'='*50}")
     print(f"同步完成：更新 {synced} 篇，跳过 {skipped} 篇，失败 {failed} 篇。")
+
+    if FEISHU_WEBHOOK_URL:
+        send_sync_result(FEISHU_WEBHOOK_URL, synced, skipped, failed, elapsed)

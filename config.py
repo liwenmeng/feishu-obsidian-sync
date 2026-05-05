@@ -29,3 +29,6 @@ NO_PROXY = {"http": None, "https": None}
 
 # 本地 token 缓存文件
 TOKEN_FILE = os.getenv("TOKEN_FILE", "tokens.json")
+
+# 飞书群机器人 webhook（可选，不填则不发通知）
+FEISHU_WEBHOOK_URL = os.getenv("FEISHU_WEBHOOK_URL", "")
